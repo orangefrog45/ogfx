@@ -19,7 +19,7 @@ namespace ogfx {
     public:
         template<typename LayerType, typename ...Args>
         LayerType& AddLayer(Args&&... args) {
-            return *static_cast<LayerType*>(m_layers.emplace_back(std::make_unique<LayerType>((std::forward<Args&&>(args), ...))).get());
+            return *static_cast<LayerType*>(m_layers.emplace_back(std::make_unique<LayerType>(std::forward<Args>(args)...)).get());
         }
 
         void Init() {

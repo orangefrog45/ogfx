@@ -80,6 +80,8 @@ namespace ogfx {
 
 		void CreateImage(VmaAllocationCreateFlags flags=0);
 
+		void CreateExternalSharedImage(VmaAllocationCreateFlags flags=0);
+
 		void DestroyImage();
 
 		void GenerateMipmaps(vk::ImageLayout start_layout);
@@ -125,6 +127,8 @@ namespace ogfx {
 		bool ImageIsCreated() const {
 			return static_cast<bool>(m_image);
 		}
+
+		void* GetWin32Handle();
 
 		vk::DeviceMemory GetMemory();
 

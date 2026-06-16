@@ -20,14 +20,14 @@ Shader& Shader::AddStage(vk::ShaderStageFlagBits shader_stage_flags, const std::
         if (shader_stage_flags == stage) OGFX_ASSERT_STR(false, "Cannot add duplicate shader stage");
     }
 
-    std::vector<std::byte> spv;
+    std::vector<std::byte>& spv = m_spv_storage.emplace_back();
     ReadBinaryFile(spv_path, spv);
 
     OGFX_ASSERT(spv.size() % 4 == 0);
 
     if (!m_pipeline_layout) ReflectPipelineLayout(spv);
 
-    vk::ShaderCreateInfoEXT shader_create_info{};
+    vk::ShaderCreateInfoEXT& shader_create_info = m_shader_create_infos.emplace_back();
     shader_create_info.stage = shader_stage_flags;
     shader_create_info.codeType = vk::ShaderCodeTypeEXT::eSpirv;
     shader_create_info.codeSize = spv.size();
@@ -38,10 +38,6 @@ Shader& Shader::AddStage(vk::ShaderStageFlagBits shader_stage_flags, const std::
     shader_create_info.pushConstantRangeCount = m_push_constant_ranges.size();
     shader_create_info.pPushConstantRanges = m_push_constant_ranges.data();
 
-    auto [r, shader] = VkContext::GetLogicalDevice().device.createShaderEXT(shader_create_info);
-    OGFX_VK_CHECK(r);
-
-    m_shaders.emplace_back(shader);
     m_shader_stages.emplace_back(shader_stage_flags);
     return *this;
 }
@@ -52,6 +48,15 @@ vk::PipelineLayout Shader::GetPipelineLayout() {
 
 void Shader::Bind(vk::CommandBuffer& cmd) {
     cmd.bindShadersEXT(m_shaders.size(), m_shader_stages.data(), m_shaders.data());
+}
+
+void Shader::Build() {
+    m_shaders.resize(m_shader_create_infos.size());
+    OGFX_VK_CHECK(VkContext::GetLogicalDevice().device.createShadersEXT(
+        m_shader_create_infos.size(), m_shader_create_infos.data(), nullptr, m_shaders.data()));
+
+    m_spv_storage.clear();
+    m_shader_create_infos.clear();
 }
 
 void Shader::ReflectPipelineLayout(const std::vector<std::byte>& spv) {

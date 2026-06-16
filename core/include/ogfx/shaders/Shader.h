@@ -16,7 +16,8 @@ namespace ogfx {
 
         Shader& AddStage(vk::ShaderStageFlagBits shader_stage_flags, const std::string& spv_path);
         void Bind(vk::CommandBuffer& cmd);
-        vk::PipelineLayout GetPipelineLayout();
+        void Build();
+        [[nodiscard]] vk::PipelineLayout GetPipelineLayout();
     private:
         void ReflectPipelineLayout(const std::vector<std::byte>& spv);
 
@@ -24,7 +25,10 @@ namespace ogfx {
         std::vector<vk::PushConstantRange> m_push_constant_ranges;
 
         std::vector<vk::ShaderEXT> m_shaders;
+        std::vector<vk::ShaderCreateInfoEXT> m_shader_create_infos;
         std::vector<vk::ShaderStageFlagBits> m_shader_stages;
+
+        std::vector<std::vector<std::byte>> m_spv_storage;
 
         vk::UniquePipelineLayout m_pipeline_layout;
     };

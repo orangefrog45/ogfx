@@ -1,5 +1,4 @@
 #include "ogfx/pch.h"
-#include "vk_mem_alloc.h"
 #include "ogfx/resources/Image.h"
 #include "ogfx/VkCommon.h"
 
@@ -17,7 +16,7 @@ void Image2D::CreateSampler() {
 	sampler_info.addressModeV = vk::SamplerAddressMode::eRepeat;
 	sampler_info.addressModeW = vk::SamplerAddressMode::eRepeat;
 	sampler_info.anisotropyEnable = true;
-	sampler_info.maxAnisotropy = VkContext::GetPhysicalDevice().properties.limits.maxSamplerAnisotropy;
+	sampler_info.maxAnisotropy = VkContext::GetPhysicalDevice().vkb_device.properties.limits.maxSamplerAnisotropy;
 	sampler_info.borderColor = vk::BorderColor::eFloatOpaqueBlack;
 	sampler_info.unnormalizedCoordinates = false; // Coordinates are in range [0, 1], not [0, tex_pixel_extents]
 	sampler_info.compareEnable = false;
@@ -110,6 +109,65 @@ void Image2D::CreateImage(VmaAllocationCreateFlags flags) {
 
 	CreateImageView();
 	CreateSampler();
+}
+
+void Image2D::CreateExternalSharedImage(VmaAllocationCreateFlags flags) {
+	OGFX_ASSERT(m_owns_image);
+
+	vk::ImageCreateInfo image_info{};
+	image_info.imageType = vk::ImageType::e2D;
+	image_info.extent.width = m_spec.size.x;
+	image_info.extent.height = m_spec.size.y;
+	image_info.extent.depth = 1;
+	image_info.mipLevels = m_spec.mip_levels;
+	image_info.arrayLayers = 1;
+	image_info.format = m_spec.format;
+	image_info.tiling = m_spec.tiling;
+	image_info.initialLayout = vk::ImageLayout::eUndefined;
+	image_info.usage = m_spec.usage;
+	image_info.sharingMode = vk::SharingMode::eExclusive;
+	image_info.samples = vk::SampleCountFlagBits::e1;
+
+	vk::ExternalMemoryImageCreateInfo external_ci{};
+	external_ci.handleTypes = vk::ExternalMemoryHandleTypeFlagBits::eOpaqueWin32;
+
+	image_info.pNext = &external_ci;
+
+	auto im_info = static_cast<VkImageCreateInfo>(image_info);
+	VmaAllocationCreateInfo alloc_info{};
+	alloc_info.usage = VMA_MEMORY_USAGE_AUTO;
+	alloc_info.flags = flags;
+
+	uint32_t mem_type_idx;
+	OGFX_VK_CHECK(vmaFindMemoryTypeIndexForImageInfo(VkContext::GetAllocator(),
+		reinterpret_cast<const VkImageCreateInfo*>(&image_info), &alloc_info, &mem_type_idx));
+
+	constexpr static VkExportMemoryAllocateInfoKHR export_info = {
+		VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO_KHR,
+		nullptr,
+		VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT
+	};
+
+	VmaPoolCreateInfo pool_info = {};
+	pool_info.memoryTypeIndex = mem_type_idx;
+	pool_info.pMemoryAllocateNext = (void*)&export_info;
+
+	VmaPool pool;
+	OGFX_VK_CHECK(vmaCreatePool(VkContext::GetAllocator(), &pool_info, &pool));
+
+	alloc_info.pool = pool;
+
+	OGFX_VK_CHECK(vmaCreateImage(VkContext::GetAllocator(), &im_info, &alloc_info,
+		reinterpret_cast<VkImage*>(&m_image), &m_allocation, nullptr));
+
+	CreateImageView();
+	CreateSampler();
+}
+
+void* Image2D::GetWin32Handle() {
+	HANDLE handle = nullptr;
+	OGFX_VK_CHECK(vmaGetMemoryWin32Handle(VkContext::GetAllocator(), m_allocation, nullptr, &handle));
+	return handle;
 }
 
 void Image2D::GenerateMipmaps(vk::ImageLayout start_layout) {

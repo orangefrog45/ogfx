@@ -5,8 +5,8 @@
 #include <mutex>
 #include <optional>
 
-#include <vk_mem_alloc.h>
 #include <vulkan/vulkan.hpp>
+#include <vk_mem_alloc.h>
 #include <VkBootstrap.h>
 
 #include "ogfx/util/VkUtil.h"
@@ -67,17 +67,8 @@ namespace ogfx {
 	};
 
 	struct PhysicalDevice {
-		PhysicalDevice() {
-			buffer_properties.pNext = &accel_properties;
-			accel_properties.pNext = &ray_properties;
-		}
-
 		vk::PhysicalDevice device;
 		vkb::PhysicalDevice vkb_device;
-		vk::PhysicalDeviceProperties properties;
-		vk::PhysicalDeviceDescriptorBufferPropertiesEXT buffer_properties;
-		vk::PhysicalDeviceAccelerationStructurePropertiesKHR accel_properties;
-		vk::PhysicalDeviceRayTracingPipelinePropertiesKHR ray_properties;
 	};
 
 	class VkContext {
@@ -148,16 +139,16 @@ namespace ogfx {
 		VkContext()=default;
 
 		void I_InitVMA() {
-			VmaVulkanFunctions vulkan_functions{};
-			vulkan_functions.vkGetInstanceProcAddr = vkGetInstanceProcAddr;
-			vulkan_functions.vkGetDeviceProcAddr = vkGetDeviceProcAddr;
-
 			VmaAllocatorCreateInfo alloc_info{};
 			alloc_info.device = m_device.device;
 			alloc_info.physicalDevice = m_physical_device.device;
 			alloc_info.instance = m_instance;
+
+			VmaVulkanFunctions vulkan_functions{};
+			vmaImportVulkanFunctionsFromVolk(&alloc_info, &vulkan_functions);
+
 			alloc_info.pVulkanFunctions = &vulkan_functions;
-			alloc_info.flags = VmaAllocatorCreateFlagBits::VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT;
+			alloc_info.flags = VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT | VMA_ALLOCATOR_CREATE_KHR_EXTERNAL_MEMORY_WIN32_BIT;
 			OGFX_VK_CHECK(vmaCreateAllocator(&alloc_info, &m_allocator));
 		}
 

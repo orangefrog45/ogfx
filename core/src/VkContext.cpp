@@ -1,6 +1,6 @@
+#define VMA_IMPLEMENTATION
 #include "ogfx/pch.h"
 
-#define VMA_IMPLEMENTATION
 #include "ogfx/VkContext.h"
 #include "ogfx/multithreading/JobSystem.h"
 
@@ -57,6 +57,8 @@ void VkContext::IPickPhysicalDevice(std::optional<vk::SurfaceKHR> surface) {
     .set_required_features_12(features12)
     .add_required_extension(VK_EXT_SHADER_OBJECT_EXTENSION_NAME)
     .add_required_extension(VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME)
+    .add_required_extension("VK_KHR_external_memory")
+    .add_required_extension("VK_KHR_external_memory_win32")
     .add_required_extension_features(shader_object_features);
 
     if (surface.has_value())
@@ -122,6 +124,7 @@ void VkContext::ICreateInstance(const char* app_name) {
         "VK_KHR_xcb_surface"
 #endif
         VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
+        VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME
     };
 
     vkb::InstanceBuilder builder;

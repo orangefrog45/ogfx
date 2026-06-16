@@ -4,7 +4,7 @@
 #include <memory>
 #include <unordered_map>
 
-#include "util/Logger.h"
+#include "ogfx/util/Logger.h"
 
 #define OGFX_EVENT_CLASS(id) static uint64_t GetId() {return id;}\
     void Dispatch() override {EventManager::Dispatch(*this);}
