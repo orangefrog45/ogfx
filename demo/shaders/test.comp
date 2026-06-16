@@ -1,0 +1,16 @@
+#version 460
+
+layout(local_size_x = 8, local_size_y = 8) in;
+
+layout(push_constant) uniform PushConstants {
+    float v;
+} pc;
+
+layout(set = 0, binding = 0, rgba8) uniform image2D storageImage;
+
+void main() {
+    ivec2 texel_coord = ivec2(gl_GlobalInvocationID.xy);
+    vec2 normalized = vec2(texel_coord) / vec2(1920, 1080);
+
+    imageStore(storageImage, texel_coord, vec4(normalized.xy, pc.v, 1.0));
+}
