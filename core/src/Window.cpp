@@ -23,6 +23,14 @@ namespace ogfx {
         p_window->m_input.m_mouse_position = { (int)xpos, (int)ypos };
     }
 
+    void GlfwMouseButtonCallback(GLFWwindow* window, int button, int action, [[maybe_unused]] int mods) {
+        if (action != GLFW_RELEASE && action != GLFW_PRESS)
+            return;
+
+        auto* p_window = static_cast<Window*>(glfwGetWindowUserPointer(window));
+        p_window->m_input.m_mouse_states[static_cast<MouseButton>(button)] = static_cast<InputType>(action);
+    }
+
     void GlfwSizeCallback(GLFWwindow* p_glfw_window, [[maybe_unused]] int width, [[maybe_unused]] int height) {
         VkContext::GetLogicalDevice().GraphicsQueueWaitIdle();
 
@@ -68,6 +76,7 @@ void Window::Init(const char* name) {
     glfwSetKeyCallback(mp_window, GlfwKeyCallback);
     glfwSetScrollCallback(mp_window, GlfwScrollCallback);
     glfwSetCursorPosCallback(mp_window, GlfwCursorPosCallback);
+    glfwSetMouseButtonCallback(mp_window, GlfwMouseButtonCallback);
     glfwSetWindowSizeCallback(mp_window, GlfwSizeCallback);
 
     if (!mp_window) {

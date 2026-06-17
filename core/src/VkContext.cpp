@@ -51,6 +51,9 @@ void VkContext::IPickPhysicalDevice(std::optional<vk::SurfaceKHR> surface) {
     vk::PhysicalDeviceShaderObjectFeaturesEXT shader_object_features{};
     shader_object_features.shaderObject = true;
 
+    vk::PhysicalDeviceHostImageCopyFeaturesEXT host_image_copy_features{};
+    host_image_copy_features.hostImageCopy = true;
+
     selector
     .set_minimum_version(1, 4)
     .set_required_features_13(features)
@@ -59,7 +62,9 @@ void VkContext::IPickPhysicalDevice(std::optional<vk::SurfaceKHR> surface) {
     .add_required_extension(VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME)
     .add_required_extension("VK_KHR_external_memory")
     .add_required_extension("VK_KHR_external_memory_win32")
-    .add_required_extension_features(shader_object_features);
+    .add_required_extension(VK_EXT_HOST_IMAGE_COPY_EXTENSION_NAME)
+    .add_required_extension_features(shader_object_features)
+    .add_required_extension_features(host_image_copy_features);
 
     if (surface.has_value())
         selector.set_surface(surface.value());

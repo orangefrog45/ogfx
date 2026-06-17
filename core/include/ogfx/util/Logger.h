@@ -5,7 +5,6 @@
 #include <format>
 #include <fstream>
 #include <iostream>
-#include <stacktrace>
 
 namespace ogfx {
     enum class LogType {
@@ -63,7 +62,7 @@ namespace ogfx {
 #define OGFX_CORE_INFO(...) do {ogfx::Logger::Log(ogfx::LogType::L_INFO, __VA_ARGS__); } while(false)
 #define OGFX_CORE_WARN(...) do {ogfx::Logger::Log(ogfx::LogType::L_WARN, __VA_ARGS__); } while(false)
 #define OGFX_CORE_ERROR(...) do {ogfx::Logger::Log(ogfx::LogType::L_ERROR, __VA_ARGS__); } while(false)
-#define OGFX_CORE_CRITICAL(...) do {ogfx::Logger::Log(ogfx::LogType::L_CRITICAL, __VA_ARGS__); ogfx::Logger::Log(ogfx::LogType::L_CRITICAL, "Stacktrace:\n{}", std::to_string(std::stacktrace::current())); OGFX_BREAKPOINT; } while(false)
+#define OGFX_CORE_CRITICAL(...) do {ogfx::Logger::Log(ogfx::LogType::L_CRITICAL, __VA_ARGS__); OGFX_BREAKPOINT; } while(false)
 
 #define OGFX_ASSERT(x) do { if (!(x)) OGFX_CORE_CRITICAL("Assertion failed: '{}'", #x); } while(false)
 #define OGFX_DBG_ASSERT(x) do { if (!(x)) OGFX_CORE_CRITICAL("Debug assertion failed: '{}'", #x); } while(false)

@@ -5,15 +5,16 @@
 namespace ogfx {
 	struct Image2DSpec {
 		Image2DSpec() = default;
-		Image2DSpec(vk::Format fmt, vk::ImageUsageFlags use_flags, vk::ImageTiling _tiling, vk::ImageAspectFlags asp_flags, glm::uvec2 _size, unsigned mips) :
+		Image2DSpec(vk::Format fmt, vk::ImageUsageFlags use_flags, vk::ImageTiling _tiling,
+			vk::ImageAspectFlags asp_flags, glm::uvec2 _size, unsigned mips) :
 			format(fmt), usage(use_flags), tiling(_tiling), aspect_flags(asp_flags), size(_size), mip_levels(mips) {}
 
 		vk::Format format = vk::Format::eUndefined;
 		vk::ImageUsageFlags usage = vk::ImageUsageFlagBits::eSampled;
 		vk::ImageTiling tiling = vk::ImageTiling::eOptimal;
 		vk::ImageAspectFlags aspect_flags = vk::ImageAspectFlagBits::eNone;
-		unsigned mip_levels = 1;
 		glm::uvec2 size{ 0, 0 };
+		unsigned mip_levels = 1;
 	};
 
 	class Image2D {
@@ -106,31 +107,34 @@ namespace ogfx {
 
 		vk::RenderingAttachmentInfo CreateAttachmentInfo(vk::AttachmentLoadOp load_op, vk::AttachmentStoreOp store_op, vk::ImageLayout layout, vk::ClearColorValue clear_val = {0.f, 0.f, 0.f, 0.f});
 
-		vk::ImageSubresourceRange GetFullSubresourceRange(vk::ImageAspectFlags aspect_mask) const;
+		[[nodiscard]] vk::ImageSubresourceRange GetFullSubresourceRange(vk::ImageAspectFlags aspect_mask) const;
 		
-		vk::DescriptorImageInfo GetDescriptorInfo(vk::ImageLayout layout) const;
+		[[nodiscard]] vk::DescriptorImageInfo GetDescriptorInfo(vk::ImageLayout layout) const;
 
 		vk::WriteDescriptorSet GetWriteDescriptorSet(uint32_t binding, vk::DescriptorImageInfo* image_info) const;
 
-		vk::ImageView GetImageView() const {
+		[[nodiscard]] vk::ImageView GetImageView() const {
 			return *m_view;
 		}
 
-		vk::Sampler GetSampler() const {
+		[[nodiscard]] vk::Sampler GetSampler() const {
 			return *m_sampler;
 		}
 
-		vk::Image GetImage() const noexcept {
+		[[nodiscard]] vk::Image GetImage() const noexcept {
 			return m_image;
 		}
 
-		bool ImageIsCreated() const {
+		[[nodiscard]] bool ImageIsCreated() const {
 			return static_cast<bool>(m_image);
 		}
 
 		void* GetWin32Handle();
 
 		vk::DeviceMemory GetMemory();
+
+		// Returns the size in bytes of the underlying VMA allocation
+		size_t GetAllocationSize();
 
 	protected:
 		void CreateSampler();
@@ -154,19 +158,4 @@ namespace ogfx {
 
 		bool m_owns_image = true;
 	};
-
-	// An image that always resizes itself to the current active window dimensions
-	// class FullscreenImage2D : public Image2D {
-	// public:
-	// 	// Initial layout is the layout this image is transitioned to whenever the image is (re)created
-	// 	explicit FullscreenImage2D(vk::ImageLayout initial_layout);
-	// private:
-	// 	const vk::ImageLayout m_initial_layout;
-	//
-	// 	std::optional<SwapchainInvalidateEvent> m_swapchain_invalidate_event_data;
-	// 	EventListener m_frame_start_listener;
-	// 	EventListener m_swapchain_invalidate_listener;
-	// };
-
-
 }

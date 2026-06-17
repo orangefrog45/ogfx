@@ -10,6 +10,7 @@ add_library(ogfx-core STATIC
     src/util/Util.cpp
     src/Window.cpp
     src/Gui.cpp
+    src/shaders/Shader.cpp
 
     ../extern/imgui/imgui.cpp
     ../extern/imgui/imgui_draw.cpp
@@ -18,7 +19,6 @@ add_library(ogfx-core STATIC
     ../extern/imgui/imgui_widgets.cpp
     ../extern/imgui/backends/imgui_impl_vulkan.cpp
     ../extern/imgui/backends/imgui_impl_glfw.cpp
-        src/shaders/Shader.cpp
 )
 
 

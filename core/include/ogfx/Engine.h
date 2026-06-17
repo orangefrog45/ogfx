@@ -61,6 +61,7 @@ namespace ogfx {
             }
 
             m_shutdown_listener = {[&](auto&) {m_running = false;}, true};
+
             m_initialized = true;
             layers.Init();
         }

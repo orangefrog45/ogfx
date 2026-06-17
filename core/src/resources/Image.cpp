@@ -234,6 +234,12 @@ vk::DeviceMemory Image2D::GetMemory() {
 	return alloc_info.deviceMemory;
 }
 
+size_t Image2D::GetAllocationSize() {
+	VmaAllocationInfo alloc_info;
+	vmaGetAllocationInfo(VkContext::GetAllocator(), m_allocation, &alloc_info);
+	return alloc_info.size;
+}
+
 void Image2D::TransitionImageLayout(vk::ImageLayout old_layout, vk::ImageLayout new_layout,
 	vk::CommandBuffer buf, unsigned mip_level, unsigned level_count) {
 	vk::PipelineStageFlags src_stage = vk::PipelineStageFlagBits::eNone;

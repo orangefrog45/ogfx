@@ -12,6 +12,7 @@ namespace ogfx {
         friend void GlfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
         friend void GlfwScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
         friend void GlfwCursorPosCallback(GLFWwindow* window, double xpos, double ypos);
+        friend void GlfwMouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
         friend void GlfwSizeCallback(GLFWwindow* p_glfw_window, int width, int height);
     public:
         struct ResizeEvent : ogfx::Event {
@@ -55,7 +56,7 @@ namespace ogfx {
         }
 
         [[nodiscard]] ogfx::Image2D& GetSwapchainImage(int idx) {
-            OGFX_ASSERT(idx < m_swapchain_images_wrapped.size());
+            OGFX_ASSERT(idx < (int)m_swapchain_images_wrapped.size());
             return m_swapchain_images_wrapped[idx];
         }
 

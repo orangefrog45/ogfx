@@ -16,7 +16,6 @@
 #include <chrono>
 
 #define VK_USE_PLATFORM_WIN32_KHR
-#define VK_KHR_external_memory_win32
 #define VK_NO_PROTOTYPES
 #include <vulkan/vulkan.hpp>
 #include <vulkan/vk_enum_string_helper.h>

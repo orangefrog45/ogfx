@@ -119,6 +119,7 @@ namespace ogfx {
         friend void GlfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
         friend void GlfwScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
         friend void GlfwCursorPosCallback(GLFWwindow* window, double xpos, double ypos);
+        friend void GlfwMouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 	public:
 		struct ScrollState {
 			bool active = false;
