@@ -1,10 +1,15 @@
 #pragma once
 
+#ifndef VK_NO_PROTOTYPES
+#define VK_NO_PROTOTYPES
+#endif
+
 #include <unordered_map>
 #include <thread>
 #include <mutex>
 #include <optional>
 
+#include <volk.h>
 #include <vulkan/vulkan.hpp>
 #include <vk_mem_alloc.h>
 #include <VkBootstrap.h>
