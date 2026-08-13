@@ -42,18 +42,18 @@ void Image2D::BlitTo(Image2D& dst, unsigned dst_mip, unsigned src_mip, vk::Image
 		cmd = *temp;
 	}
 
-	float src_div = glm::pow(2.f, (float)src_mip);
-	float dst_div = glm::pow(2.f, (float)dst_mip);
+	float src_div = lml::pow(2.f, (float)src_mip);
+	float dst_div = lml::pow(2.f, (float)dst_mip);
 
 	vk::ImageBlit blits;
 	blits.srcOffsets[0] = vk::Offset3D{ 0, 0, 0 };
-	blits.srcOffsets[1] = vk::Offset3D{ glm::max((int32_t)((float)m_spec.size.x / src_div), 1), glm::max((int32_t)((float)m_spec.size.y / src_div), 1), 1 };
+	blits.srcOffsets[1] = vk::Offset3D{ lml::max((int32_t)((float)m_spec.size.x / src_div), 1), lml::max((int32_t)((float)m_spec.size.y / src_div), 1), 1 };
 	blits.srcSubresource.aspectMask = m_spec.aspect_flags;
 	blits.srcSubresource.mipLevel = src_mip;
 	blits.srcSubresource.baseArrayLayer = 0;
 	blits.srcSubresource.layerCount = 1;
 	blits.dstOffsets[0] = vk::Offset3D{ 0, 0, 0 };
-	blits.dstOffsets[1] = vk::Offset3D{ glm::max((int32_t)((float)dst.m_spec.size.x / dst_div), 1), glm::max((int32_t)((float)dst.m_spec.size.y / dst_div), 1), 1 };
+	blits.dstOffsets[1] = vk::Offset3D{ lml::max((int32_t)((float)dst.m_spec.size.x / dst_div), 1), lml::max((int32_t)((float)dst.m_spec.size.y / dst_div), 1), 1 };
 	blits.dstSubresource.aspectMask = dst.m_spec.aspect_flags;
 	blits.dstSubresource.mipLevel = dst_mip;
 	blits.dstSubresource.baseArrayLayer = 0;

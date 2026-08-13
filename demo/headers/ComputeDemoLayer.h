@@ -32,14 +32,6 @@ public:
         compute_shader
         .AddStage(vk::ShaderStageFlagBits::eCompute, "C:/Users/Sam/Documents/Dev/vscode/ogfx/demo/shaders/test.comp.spirv")
         .Build();
-
-        ogfx::Image2DSpec spec;
-        spec.format = vk::Format::eR8G8B8A8Unorm;
-        spec.size = { 1024, 1024 };
-        spec.usage = vk::ImageUsageFlagBits::eStorage | vk::ImageUsageFlagBits::eSampled | vk::ImageUsageFlagBits::eTransferDst;
-        spec.tiling = vk::ImageTiling::eOptimal;
-        spec.aspect_flags = vk::ImageAspectFlagBits::eColor;
-        spec.mip_levels = 1;
     }
 
     void Update() override {

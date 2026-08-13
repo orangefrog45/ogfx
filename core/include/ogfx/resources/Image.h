@@ -1,19 +1,19 @@
 #pragma once
-#include <../glm/glm/glm.hpp>
+#include <lml/include/lml/core.h>
 #include "ogfx/VkContext.h"
 
 namespace ogfx {
 	struct Image2DSpec {
 		Image2DSpec() = default;
 		Image2DSpec(vk::Format fmt, vk::ImageUsageFlags use_flags, vk::ImageTiling _tiling,
-			vk::ImageAspectFlags asp_flags, glm::uvec2 _size, unsigned mips) :
+			vk::ImageAspectFlags asp_flags, lml::uvec2 _size, unsigned mips) :
 			format(fmt), usage(use_flags), tiling(_tiling), aspect_flags(asp_flags), size(_size), mip_levels(mips) {}
 
 		vk::Format format = vk::Format::eUndefined;
 		vk::ImageUsageFlags usage = vk::ImageUsageFlagBits::eSampled;
 		vk::ImageTiling tiling = vk::ImageTiling::eOptimal;
 		vk::ImageAspectFlags aspect_flags = vk::ImageAspectFlagBits::eNone;
-		glm::uvec2 size{ 0, 0 };
+		lml::uvec2 size{ 0, 0 };
 		unsigned mip_levels = 1;
 	};
 

@@ -1,6 +1,6 @@
 #pragma once
 #include <unordered_map>
-#include <../glm/glm/glm.hpp>
+#include <lml/core.h>
 
 struct GLFWwindow;
 
@@ -123,7 +123,7 @@ namespace ogfx {
 	public:
 		struct ScrollState {
 			bool active = false;
-			glm::vec2 offset = { 0, 0 };
+			lml::vec2 offset = { 0, 0 };
 		};
 
 		[[nodiscard]] ScrollState GetScrollState() const {
@@ -174,12 +174,12 @@ namespace ogfx {
 			return m_mouse_states.contains(b) && m_mouse_states.at(b) == InputType::PRESS;
 		}
 
-		[[nodiscard]] glm::ivec2 GetMousePos() const {
+		[[nodiscard]] lml::ivec2 GetMousePos() const {
 			return m_mouse_position;
 		}
 
-		[[nodiscard]] glm::vec2 GetMouseDelta() const {
-			return m_mouse_position - m_last_mouse_position;
+		[[nodiscard]] lml::vec2 GetMouseDelta() const {
+			return lml::vec2((float)m_mouse_position.x - (float)m_last_mouse_position.x, (float)m_mouse_position.y - (float)m_last_mouse_position.y);
 		}
 
 		void Update() {
@@ -200,8 +200,8 @@ namespace ogfx {
 		}
 
 	private:
-		glm::ivec2 m_mouse_position{ 0, 0 };
-		glm::ivec2 m_last_mouse_position{ 0, 0 };
+		lml::ivec2 m_mouse_position{ 0, 0 };
+		lml::ivec2 m_last_mouse_position{ 0, 0 };
 
 		std::unordered_map<Key, InputType> m_key_states;
 		std::unordered_map<MouseButton, InputType> m_mouse_states;

@@ -16,7 +16,7 @@ set(ogfx-core-includes
     ${CMAKE_CURRENT_LIST_DIR}/extern/vk-bootstrap/src
     ${CMAKE_CURRENT_LIST_DIR}/extern/VulkanMemoryAllocator/include
     ${CMAKE_CURRENT_LIST_DIR}/extern/glfw/include
-    ${CMAKE_CURRENT_LIST_DIR}/extern/glm
+    ${CMAKE_CURRENT_LIST_DIR}/extern/lml/include
     ${CMAKE_CURRENT_LIST_DIR}/extern/imgui
     ${CMAKE_CURRENT_LIST_DIR}/extern
     $ENV{VULKAN_SDK}/Include
