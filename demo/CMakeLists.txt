@@ -7,3 +7,5 @@ add_executable(ogfx-demo
 )
 
 target_link_libraries(ogfx-demo PUBLIC ogfx-core)
+
+target_compile_definitions(ogfx-demo PUBLIC DEMO_SHADER_DIR="${CMAKE_CURRENT_LIST_DIR}/shaders")

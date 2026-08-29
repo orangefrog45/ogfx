@@ -30,7 +30,7 @@ public:
         }
 
         compute_shader
-        .AddStage(vk::ShaderStageFlagBits::eCompute, "C:/Users/Sam/Documents/Dev/vscode/ogfx/demo/shaders/test.comp.spirv")
+        .AddStage(vk::ShaderStageFlagBits::eCompute, DEMO_SHADER_DIR "/test.comp.spirv")
         .Build();
     }
 
