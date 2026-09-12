@@ -36,12 +36,13 @@ namespace ogfx {
 
         auto* p_window = reinterpret_cast<Window*>(glfwGetWindowUserPointer(p_glfw_window));
 
-        Window::ResizeEvent _event;
+        Window::WindowEvent _event;
+        _event.type = Window::WindowEvent::Type::RESIZED;
         _event.prev_width = p_window->m_width;
         _event.prev_height = p_window->m_height;
         _event.prev_minimized = p_window->m_minimized;
-        _event.new_width = width;
-        _event.new_height = height;
+        _event.new_width = (uint32_t)width;
+        _event.new_height = (uint32_t)height;
 
         p_window->DestroySwapchain();
 
@@ -51,8 +52,8 @@ namespace ogfx {
         } else {
             p_window->m_minimized = false;
             _event.new_minimized = false;
-            p_window->m_width = width;
-            p_window->m_height = height;
+            p_window->m_width = (uint32_t)width;
+            p_window->m_height = (uint32_t)height;
             p_window->CreateSwapchain();
         }
 
@@ -78,6 +79,10 @@ void Window::Init(const char* name) {
     glfwSetCursorPosCallback(mp_window, GlfwCursorPosCallback);
     glfwSetMouseButtonCallback(mp_window, GlfwMouseButtonCallback);
     glfwSetWindowSizeCallback(mp_window, GlfwSizeCallback);
+
+    float x_scale, y_scale;
+    glfwGetWindowContentScale(mp_window, &x_scale, &y_scale);
+    m_dpi_scale = (x_scale > y_scale) ? x_scale : y_scale;
 
     if (!mp_window) {
         OGFX_CORE_CRITICAL("Failed to create window.");
@@ -136,6 +141,18 @@ void Window::Update() {
     // This order ensures that the PRESS state is active for one frame
     m_input.Update();
     glfwPollEvents();
+
+    float x_scale, y_scale;
+    glfwGetWindowContentScale(mp_window, &x_scale, &y_scale);
+    float new_dpi_scale = (x_scale > y_scale) ? x_scale : y_scale;
+    if (new_dpi_scale != m_dpi_scale) {
+        WindowEvent _event;
+        _event.type = WindowEvent::Type::DPI_CHANGED;
+        _event.old_dpi_scale = m_dpi_scale;
+        _event.new_dpi_scale = new_dpi_scale;
+        m_dpi_scale = new_dpi_scale;
+        _event.Dispatch();
+    }
 }
 
 bool Window::ShouldClose() const {

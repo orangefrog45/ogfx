@@ -51,6 +51,98 @@ vk::DescriptorPool ogfx::InitImGui(Window& window) {
     OGFX_VK_CHECK(vkCreateDescriptorPool(VkContext::GetLogicalDevice().device, &pool_info, nullptr, &imgui_pool));
 
     ImGui::CreateContext();
+    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+    auto& style = ImGui::GetStyle();
+    auto& colors = style.Colors;
+
+    style.WindowRounding = 5.0f;
+    style.ChildRounding = 5.0f;
+    style.FrameRounding = 5.0f;
+    style.PopupRounding = 5.0f;
+    style.ScrollbarRounding = 5.0f;
+    style.GrabRounding = 5.0f;
+    style.TabRounding = 5.0f;
+
+    style.WindowBorderSize = 0.0f;
+    style.ChildBorderSize = 0.0f;
+    style.PopupBorderSize = 0.0f;
+    style.FrameBorderSize = 0.0f;
+    style.TabBorderSize = 0.0f;
+
+    // Dark grey primary palette
+    const ImVec4 dark_grey = ImVec4{0.12f, 0.12f, 0.12f, 1.0f};
+    const ImVec4 medium_grey = ImVec4{0.18f, 0.18f, 0.18f, 1.0f};
+    const ImVec4 light_grey = ImVec4{0.25f, 0.25f, 0.25f, 1.0f};
+    const ImVec4 text_color = ImVec4{0.90f, 0.90f, 0.90f, 1.0f};
+
+    // Orange secondary palette
+    const ImVec4 orange = ImVec4{0.85f, 0.25f, 0.10f, 1.0f};
+    const ImVec4 orange_hover = ImVec4{1.00f, 0.25f, 0.20f, 1.0f};
+    const ImVec4 orange_active = ImVec4{0.70f, 0.25f, 0.05f, 1.0f};
+
+    // Accents
+    const ImVec4 blue = ImVec4{0.10f, 0.45f, 0.85f, 1.0f};
+    const ImVec4 yellow = ImVec4{0.85f, 0.85f, 0.10f, 1.0f};
+
+    colors[ImGuiCol_Text] = text_color;
+    colors[ImGuiCol_TextDisabled] = ImVec4{0.50f, 0.50f, 0.50f, 1.0f};
+    colors[ImGuiCol_WindowBg] = dark_grey;
+    colors[ImGuiCol_ChildBg] = dark_grey;
+    colors[ImGuiCol_PopupBg] = dark_grey;
+    colors[ImGuiCol_Border] = light_grey;
+    colors[ImGuiCol_BorderShadow] = ImVec4{0.00f, 0.00f, 0.00f, 0.00f};
+    colors[ImGuiCol_FrameBg] = medium_grey;
+    colors[ImGuiCol_FrameBgHovered] = light_grey;
+    colors[ImGuiCol_FrameBgActive] = light_grey;
+    colors[ImGuiCol_TitleBg] = medium_grey;
+    colors[ImGuiCol_TitleBgActive] = medium_grey;
+    colors[ImGuiCol_TitleBgCollapsed] = medium_grey;
+    colors[ImGuiCol_MenuBarBg] = medium_grey;
+    colors[ImGuiCol_ScrollbarBg] = dark_grey;
+    colors[ImGuiCol_ScrollbarGrab] = light_grey;
+    colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4{0.40f, 0.40f, 0.40f, 1.0f};
+    colors[ImGuiCol_ScrollbarGrabActive] = ImVec4{0.50f, 0.50f, 0.50f, 1.0f};
+    colors[ImGuiCol_CheckMark] = orange;
+    colors[ImGuiCol_SliderGrab] = orange;
+    colors[ImGuiCol_SliderGrabActive] = orange_active;
+    colors[ImGuiCol_Button] = medium_grey;
+    colors[ImGuiCol_ButtonHovered] = light_grey;
+    colors[ImGuiCol_ButtonActive] = orange;
+    colors[ImGuiCol_Header] = medium_grey;
+    colors[ImGuiCol_HeaderHovered] = light_grey;
+    colors[ImGuiCol_HeaderActive] = orange;
+    colors[ImGuiCol_Separator] = light_grey;
+    colors[ImGuiCol_SeparatorHovered] = orange;
+    colors[ImGuiCol_SeparatorActive] = orange_active;
+    colors[ImGuiCol_ResizeGrip] = medium_grey;
+    colors[ImGuiCol_ResizeGripHovered] = orange;
+    colors[ImGuiCol_ResizeGripActive] = orange_active;
+    colors[ImGuiCol_TabHovered] = orange_hover;
+    colors[ImGuiCol_Tab] = medium_grey;
+    colors[ImGuiCol_TabSelected] = orange;
+    colors[ImGuiCol_TabSelectedOverline] = orange;
+    colors[ImGuiCol_TabDimmed] = medium_grey;
+    colors[ImGuiCol_TabDimmedSelected] = light_grey;
+    colors[ImGuiCol_TabDimmedSelectedOverline] = orange;
+    colors[ImGuiCol_DockingPreview] = orange;
+    colors[ImGuiCol_DockingEmptyBg] = dark_grey;
+    colors[ImGuiCol_PlotLines] = blue;
+    colors[ImGuiCol_PlotLinesHovered] = orange;
+    colors[ImGuiCol_PlotHistogram] = blue;
+    colors[ImGuiCol_PlotHistogramHovered] = orange;
+    colors[ImGuiCol_TableHeaderBg] = medium_grey;
+    colors[ImGuiCol_TableBorderStrong] = light_grey;
+    colors[ImGuiCol_TableBorderLight] = light_grey;
+    colors[ImGuiCol_TableRowBg] = dark_grey;
+    colors[ImGuiCol_TableRowBgAlt] = medium_grey;
+    colors[ImGuiCol_TextSelectedBg] = orange;
+    colors[ImGuiCol_DragDropTarget] = yellow;
+    colors[ImGuiCol_NavHighlight] = orange;
+    colors[ImGuiCol_NavWindowingHighlight] = orange;
+    colors[ImGuiCol_NavWindowingDimBg] = ImVec4{0.00f, 0.00f, 0.00f, 0.70f};
+    colors[ImGuiCol_ModalWindowDimBg] = ImVec4{0.00f, 0.00f, 0.00f, 0.70f};
+
     ImGui_ImplGlfw_InitForVulkan(window.GetGlfwWindow(), true);
 
     ImGui_ImplVulkan_InitInfo init_info = {};

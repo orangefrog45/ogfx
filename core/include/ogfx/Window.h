@@ -15,17 +15,27 @@ namespace ogfx {
         friend void GlfwMouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
         friend void GlfwSizeCallback(GLFWwindow* p_glfw_window, int width, int height);
     public:
-        struct ResizeEvent : ogfx::Event {
-            OGFX_EVENT_CLASS("ResizeEvent");
+        struct WindowEvent : ogfx::Event {
+            OGFX_EVENT_CLASS("WindowEvent");
 
-            uint32_t prev_width;
-            uint32_t prev_height;
+            enum class Type {
+                RESIZED,
+                DPI_CHANGED
+            };
 
-            uint32_t new_width;
-            uint32_t new_height;
+            Type type;
+            
+            // Resize data
+            uint32_t prev_width = 0;
+            uint32_t prev_height = 0;
+            uint32_t new_width = 0;
+            uint32_t new_height = 0;
+            bool prev_minimized = false;
+            bool new_minimized = false;
 
-            bool prev_minimized;
-            bool new_minimized;
+            // DPI data
+            float old_dpi_scale = 1.0f;
+            float new_dpi_scale = 1.0f;
         };
 
         Window(uint32_t width, uint32_t height) : m_width(width), m_height(height) {}
@@ -72,6 +82,10 @@ namespace ogfx {
             return m_height;
         }
 
+        [[nodiscard]] float GetDPIScale() const {
+            return m_dpi_scale;
+        }
+
     private:
         inline static bool m_glfw_initialized = false;
 
@@ -79,6 +93,8 @@ namespace ogfx {
 
         uint32_t m_width = 0;
         uint32_t m_height = 0;
+
+        float m_dpi_scale = 1.0f;
 
         bool m_initialized = false;
         bool m_minimized = false;

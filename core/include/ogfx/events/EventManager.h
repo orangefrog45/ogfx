@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <functional>
 #include <mutex>
+#include <atomic>
 
 #include "ogfx/events/EventBase.h"
 #include "ogfx/util/Logger.h"

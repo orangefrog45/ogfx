@@ -51,6 +51,17 @@ void ogfx::FileDelete(const std::string& filepath) {
 	}
 }
 
+void ogfx::FileMove(const std::string& filepath, const std::string& new_filepath) {
+	try {
+		if (std::filesystem::exists(filepath)) {
+			std::filesystem::rename(filepath, new_filepath);
+		}
+	}
+	catch (std::exception& e) {
+		OGFX_CORE_ERROR("std::filesystem::rename error, from '{0}' to '{1}', '{2}'", filepath, new_filepath, e.what());
+	}
+}
+
 bool ogfx::FileExists(const std::string& filepath) {
 	try {
 		return std::filesystem::exists(filepath);
@@ -184,7 +195,10 @@ std::string ogfx::GetFileLastWriteTime(const std::string& filepath) {
 }
 
 std::string ogfx::ReplaceFileExtension(const std::string& filepath, const std::string& new_extension) {
-	std::string extension = filepath.substr(filepath.rfind('.'));
+	size_t dot_pos = filepath.rfind('.');
+	if (dot_pos == std::string::npos) return filepath;
+
+	std::string extension = filepath.substr(dot_pos);
 	std::string ret = filepath;
 	StringReplace(ret, extension, new_extension);
 	return ret;

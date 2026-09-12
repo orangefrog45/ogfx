@@ -66,5 +66,5 @@ namespace ogfx {
 
 #define OGFX_ASSERT(x) do { if (!(x)) OGFX_CORE_CRITICAL("Assertion failed: '{}'", #x); } while(false)
 #define OGFX_DBG_ASSERT(x) do { if (!(x)) OGFX_CORE_CRITICAL("Debug assertion failed: '{}'", #x); } while(false)
-#define OGFX_ASSERT_STR(x, str, ...) do { if (!(x)) OGFX_CORE_CRITICAL("Assertion failed: '{}' - {}", #x, str, __VA_ARGS__); } while(false)
-#define OGFX_DBG_ASSERT_STR(x, str, ...) do { if (!(x)) OGFX_CORE_CRITICAL("Debug assertion failed: '{}' - {}", #x, str, __VA_ARGS__); } while(false)
+#define OGFX_ASSERT_STR(x, str, ...) do { if (!(x)) OGFX_CORE_CRITICAL("Assertion failed: '{}' - {}", #x, str __VA_OPT__(,) __VA_ARGS__); } while(false)
+#define OGFX_DBG_ASSERT_STR(x, str, ...) do { if (!(x)) OGFX_CORE_CRITICAL("Debug assertion failed: '{}' - {}", #x, str __VA_OPT__(,) __VA_ARGS__); } while(false)

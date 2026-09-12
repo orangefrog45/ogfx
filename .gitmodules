@@ -13,6 +13,7 @@
 [submodule "extern/imgui"]
 	path = extern/imgui
 	url = https://github.com/ocornut/imgui
+	branch = docking
 [submodule "extern/SPIRV-Reflect"]
 	path = extern/SPIRV-Reflect
 	url = https://github.com/KhronosGroup/SPIRV-Reflect

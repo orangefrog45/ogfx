@@ -10,6 +10,8 @@ namespace ogfx {
 
     void FileDelete(const std::string& filepath);
 
+    void FileMove(const std::string& filepath, const std::string& new_filepath);
+
     bool PathEqualTo(const std::string& path1, const std::string& path2);
 
     bool FileExists(const std::string& filepath);

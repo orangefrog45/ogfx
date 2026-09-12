@@ -1,5 +1,8 @@
 #pragma once
 #include <functional>
+#include <condition_variable>
+#include <mutex>
+#include <thread>
 #include "ogfx/util/Logger.h"
 #include "ogfx/multithreading/TsQueue.h"
 
