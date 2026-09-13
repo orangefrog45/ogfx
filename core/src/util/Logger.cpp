@@ -15,7 +15,13 @@ inline std::string GetTimestamp() {
     auto in_time_t = std::chrono::system_clock::to_time_t(now);
 
     std::ostringstream ss;
-    ss << std::put_time(std::localtime(&in_time_t), "%H:%M:%S");
+    std::tm time_info{};
+#if defined(_MSC_VER)
+    localtime_s(&time_info, &in_time_t);
+#else
+    localtime_r(&in_time_t, &time_info);
+#endif
+    ss << std::put_time(&time_info, "%H:%M:%S");
     return ss.str();
 }
 
@@ -26,8 +32,8 @@ const char* Logger::GetLogColour(LogType type) {
         case LogType::L_WARN:     return "\033[93m"; // yellow
         case LogType::L_ERROR:    return "\033[91m"; // red
         case LogType::L_CRITICAL: return "\033[41;97m"; // red background, white text
-        default:                  return "\033[0m";  // reset
     }
+    return "\033[0m";
 }
 
 std::string Logger::GetLogFormatStr(LogType type) {

@@ -70,7 +70,7 @@ void Window::Init(const char* name) {
     OGFX_ASSERT_STR(!m_initialized, "Cannot initialize a window more than once.");
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    mp_window = glfwCreateWindow(m_width, m_height, name, nullptr, nullptr);
+    mp_window = glfwCreateWindow((int)m_width, (int)m_height, name, nullptr, nullptr);
     OGFX_ASSERT(mp_window);
 
     glfwSetWindowUserPointer(mp_window, this);
@@ -145,7 +145,7 @@ void Window::Update() {
     float x_scale, y_scale;
     glfwGetWindowContentScale(mp_window, &x_scale, &y_scale);
     float new_dpi_scale = (x_scale > y_scale) ? x_scale : y_scale;
-    if (new_dpi_scale != m_dpi_scale) {
+    if (!lml::epsilonEqual(new_dpi_scale, m_dpi_scale, 1e-5f)) {
         WindowEvent _event;
         _event.type = WindowEvent::Type::DPI_CHANGED;
         _event.old_dpi_scale = m_dpi_scale;
@@ -164,7 +164,7 @@ bool Window::CanPresent() const {
 }
 
 void Window::SetCursorStyle(CursorStyle style) {
-    static GLFWcursor* cursors[static_cast<size_t>(CursorStyle::NUM_CURSORS)] = { 0 };
+    static GLFWcursor* cursors[static_cast<size_t>(CursorStyle::NUM_CURSORS)] = { nullptr };
 
     if (!cursors[0]) {
         cursors[static_cast<unsigned>(CursorStyle::ARROW)] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);

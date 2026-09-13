@@ -47,7 +47,7 @@ vk::UniqueCommandBuffer ogfx::BeginSingleTimeCommands() {
 	begin_info.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit;
 	cmd_buf->begin(begin_info);
 
-	return std::move(cmd_buf);
+	return cmd_buf;
 }
 
 void ogfx::EndSingleTimeCommands(vk::CommandBuffer& cmd_buf, std::optional<std::pair<vk::Semaphore, vk::PipelineStageFlags>> wait_semaphore_stage) {
