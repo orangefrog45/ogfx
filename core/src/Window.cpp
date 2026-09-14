@@ -64,10 +64,10 @@ namespace ogfx {
 
 void Window::Init(const char* name) {
     if (!m_glfw_initialized) {
-        OGFX_ASSERT_STR(glfwInit() == GLFW_TRUE, "GLFW failed to initialize");
+        OGFX_ASSERT(glfwInit() == GLFW_TRUE, "GLFW failed to initialize");
     }
 
-    OGFX_ASSERT_STR(!m_initialized, "Cannot initialize a window more than once.");
+    OGFX_ASSERT(!m_initialized, "Cannot initialize a window more than once.");
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     mp_window = glfwCreateWindow((int)m_width, (int)m_height, name, nullptr, nullptr);
@@ -85,7 +85,7 @@ void Window::Init(const char* name) {
     m_dpi_scale = (x_scale > y_scale) ? x_scale : y_scale;
 
     if (!mp_window) {
-        OGFX_CORE_CRITICAL("Failed to create window.");
+        log::Critical("Failed to create window.");
         glfwTerminate();
         return;
     }

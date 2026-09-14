@@ -112,7 +112,7 @@ void Image2D::CreateImage(VmaAllocationCreateFlags flags) {
 }
 
 void Image2D::CreateExternalSharedImage(VmaAllocationCreateFlags flags) {
-	OGFX_ASSERT(m_owns_image);
+ OGFX_ASSERT(m_owns_image);
 
 	vk::ImageCreateInfo image_info{};
 	image_info.imageType = vk::ImageType::e2D;
@@ -285,7 +285,7 @@ void Image2D::TransitionImageLayout(vk::ImageLayout old_layout, vk::ImageLayout 
 		dst_stage = vk::PipelineStageFlagBits::eBottomOfPipe;
 	}
 	else {
-		OGFX_ASSERT_STR(false, "Unsupported layout transition");
+  OGFX_ASSERT(false, "Unsupported layout transition");
 	}
 
 	TransitionImageLayout(old_layout, new_layout, src_access, dst_access, src_stage, dst_stage, buf, mip_level, level_count);
@@ -307,7 +307,7 @@ vk::UniqueImageView Image2D::CreateImageView(const Image2D& image, std::optional
 
 
 void Image2D::CreateImageView() {
-	OGFX_ASSERT(!m_view);
+ OGFX_ASSERT(!m_view);
 	m_view = CreateImageView(*this);
 }
 

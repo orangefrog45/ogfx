@@ -3,7 +3,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <thread>
-#include "ogfx/util/Logger.h"
+#include "otl/Log.h"
 #include "ogfx/multithreading/TsQueue.h"
 
 namespace ogfx {
@@ -47,7 +47,7 @@ namespace ogfx {
 		}
 
 		static void WaitOn(Job* job) {
-			OGFX_ASSERT(job->is_waited_on);
+   OGFX_ASSERT(job->is_waited_on);
 
 			while (job->unfinished_jobs.load() != 0) {
 				std::this_thread::yield();
@@ -66,7 +66,7 @@ namespace ogfx {
 			ret.push_back(std::this_thread::get_id());
 
 			for (auto& thread : Get().m_threads) {
-				OGFX_ASSERT(thread.joinable());
+    OGFX_ASSERT(thread.joinable());
 				ret.push_back(thread.get_id());
 			}
 

@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 23)
 
 set(VK_BOOTSTRAP_VULKAN_HEADER_DIR $ENV{VULKAN_SDK}/Include)
 add_subdirectory(extern/vk-bootstrap)
+add_subdirectory(extern/otl)
 
 find_package(Vulkan REQUIRED)
 add_subdirectory(extern/VulkanMemoryAllocator)
@@ -19,10 +20,11 @@ set(ogfx-core-includes
     ${CMAKE_CURRENT_LIST_DIR}/extern/lml/include
     ${CMAKE_CURRENT_LIST_DIR}/extern/imgui
     ${CMAKE_CURRENT_LIST_DIR}/extern
+    ${CMAKE_CURRENT_LIST_DIR}/extern/otl/include
     ${CMAKE_CURRENT_LIST_DIR}/../../extern/entt/src
     ${CMAKE_CURRENT_LIST_DIR}/core/include
     $ENV{VULKAN_SDK}/Include
-    CACHE STRING ""
+    CACHE STRING "" FORCE
 )
 
 set(ogfx-core-libs
@@ -30,9 +32,10 @@ set(ogfx-core-libs
     VulkanMemoryAllocator
     volk
     glfw
+    otl
     ${Vulkan_LIBRARIES}
     spirv-cross-cpp
-    CACHE STRING ""
+    CACHE STRING "" FORCE
 )
 
 add_subdirectory(core)

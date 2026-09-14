@@ -13,13 +13,10 @@
 
 #include "ogfx/events/EventManager.h"
 #include "ogfx/events/EventListener.h"
-#include "ogfx/util/Logger.h"
-#include "ogfx/util/VkUtil.h"
 #include "ogfx/VkContext.h"
 #include "ogfx/Window.h"
 #include "ogfx/VkCommands.h"
 #include "ogfx/resources/Image.h"
-#include "ogfx/util/Util.h"
 
 namespace ogfx {
     struct ShutdownEvent : Event {

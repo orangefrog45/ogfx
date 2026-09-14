@@ -6,7 +6,7 @@ namespace ogfx {
     class CommandBuffer {
     public:
         void Init(vk::CommandBufferLevel level) {
-            OGFX_ASSERT_STR(!m_initialized, "Cannot initialize a command buffer more than once.");
+            OGFX_ASSERT(!m_initialized, "Cannot initialize a command buffer more than once.");
 
             m_pool_ref = VkContext::GetCommandPool();
             vk::CommandBufferAllocateInfo alloc_info{};

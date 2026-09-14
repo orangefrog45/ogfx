@@ -3,11 +3,9 @@ cmake_minimum_required(VERSION 4.1)
 project(ogfx)
 
 add_library(ogfx-core STATIC
-    src/util/Logger.cpp
     src/VkContext.cpp
     src/resources/Image.cpp
     src/VkCommon.cpp
-    src/util/Util.cpp
     src/Window.cpp
     src/Gui.cpp
     src/shaders/Shader.cpp

@@ -3,11 +3,10 @@
 #include <ranges>
 #include <unordered_map>
 
-// NEVER change this
+// NEVER change this, it needs to use this set of headers and not the built-in vulkan ones
 #include <../extern/spirv-cross/spirv_cross.hpp>
 
 #include "ogfx/VkContext.h"
-#include "ogfx/util/Util.h"
 
 namespace ogfx {
     class Shader {

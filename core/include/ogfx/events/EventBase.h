@@ -4,20 +4,20 @@
 #include <memory>
 #include <unordered_map>
 
-#include "ogfx/util/Logger.h"
-#include "ogfx/util/Misc.h"
+#include "otl/String.h"
+#include "ogfx/util/Log.h"
 
 #define OGFX_EVENT_CLASS(name_str) static uint64_t GetId() { \
-    static constexpr uint64_t id = ogfx::HashString(name_str); \
+    static constexpr uint64_t id = otl::HashString(name_str); \
     return id; \
 } \
     void Dispatch() {ogfx::EventManager::Dispatch(*this);}
 
 namespace ogfx {
     struct Event {
-        static void Dispatch() {OGFX_ASSERT_STR(false, "Event subclasses must contain 'OGFX_EVENT_CLASS'.");}
+        static void Dispatch() { OGFX_ASSERT(false, "Event subclasses must contain 'OGFX_EVENT_CLASS'."); }
 
-        static uint64_t GetId() {OGFX_ASSERT_STR(false, "Event subclasses must contain 'OGFX_EVENT_CLASS'."); return 0;}
+        static uint64_t GetId() { OGFX_ASSERT(false, "Event subclasses must contain 'OGFX_EVENT_CLASS'."); return 0; }
     };
 
     template<std::derived_from<Event> EventType>

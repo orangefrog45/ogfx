@@ -6,7 +6,7 @@
 #include <atomic>
 
 #include "ogfx/events/EventBase.h"
-#include "ogfx/util/Logger.h"
+#include "otl/Log.h"
 
 namespace ogfx {
     using TypeId = uint64_t;
@@ -43,7 +43,7 @@ namespace ogfx {
         template<typename ListenerT>
         static void Register(ListenerT& listener) {
             if (listener.m_registered) {
-                OGFX_CORE_WARN("Tried to register an event listener more than once.");
+                log::Warn("Tried to register an event listener more than once.");
                 return;
             }
 

@@ -15,6 +15,7 @@
 #include <VkBootstrap.h>
 
 #include "ogfx/util/VkUtil.h"
+#include "ogfx/util/Log.h"
 
 namespace ogfx {
 	using FrameInFlightIndex = uint8_t;

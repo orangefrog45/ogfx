@@ -23,3 +23,6 @@
 [submodule "extern/lml"]
 	path = extern/lml
 	url = https://github.com/orangefrog45/lml
+[submodule "extern/otl"]
+	path = extern/otl
+	url = https://github.com/orangefrog45/otl

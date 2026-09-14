@@ -8,7 +8,6 @@
 #include "ogfx/VkContext.h"
 #include "ogfx/Window.h"
 #include "ogfx/shaders/Shader.h"
-#include "ogfx/util/Util.h"
 
 class ComputeDemoLayer : public ogfx::Layer {
 public:

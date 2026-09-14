@@ -12,7 +12,7 @@ uint32_t ogfx::FindMemoryType(uint32_t type_filter, vk::MemoryPropertyFlags prop
             }
     }
 
-    OGFX_ASSERT_STR(false, "Failed to find memory type");
+    OGFX_ASSERT(false, "Failed to find memory type");
     return 0;
 }
 
