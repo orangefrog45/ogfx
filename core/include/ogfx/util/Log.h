@@ -33,8 +33,8 @@ namespace ogfx {
     }
 }
 
-#define OGFX_BREAKPOINT() OTL_BREAKPOINT();
-#define OGFX_DBG_BREAKPOINT() OTL_DBG_BREAKPOINT();
+#define OGFX_BREAKPOINT() OTL_BREAKPOINT()
+#define OGFX_DBG_BREAKPOINT() OTL_DBG_BREAKPOINT()
 
 #define OGFX_ASSERT(x, ...) do { \
 if (!(x)) { \

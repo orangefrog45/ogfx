@@ -39,13 +39,15 @@ set(ogfx-core-libs
 )
 
 set(ogfx-core-compile-options
-        $<$<CXX_COMPILER_ID:MSVC>:
+        $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<COMPILE_LANGUAGE:CXX>>:
         /Zc:preprocessor
-        /WX
         /W4
         >
+        $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<COMPILE_LANGUAGE:CUDA>>:
+        -Xcompiler=/Zc:preprocessor
+        -Xcompiler=/W4
+        >
         $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
-        -Werror
         -Wall
         -Wextra
         -Wno-documentation-deprecated-sync
@@ -62,7 +64,9 @@ set(ogfx-core-compile-options
         -Wno-missing-field-initializers
         -Wno-exit-time-destructors
         -Wno-sign-conversion
+        -Wno-unused-template
         >
+        CACHE STRING "" FORCE
 )
 
 add_subdirectory(core)

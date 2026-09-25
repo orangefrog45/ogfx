@@ -31,7 +31,6 @@ target_include_directories(imgui SYSTEM PUBLIC
 target_compile_options(ogfx-core PRIVATE ${ogfx-core-compile-options})
 
 target_compile_definitions(imgui PRIVATE IMGUI_IMPL_VULKAN_USE_VOLK)
-target_compile_options(imgui PRIVATE ${ogfx-core-compile-options})
 
 target_include_directories(ogfx-core PUBLIC
     include
