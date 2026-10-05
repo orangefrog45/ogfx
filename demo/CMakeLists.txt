@@ -3,10 +3,14 @@ cmake_minimum_required(VERSION 4.1)
 project(ogfx-demo)
 
 add_executable(ogfx-demo
-    src/main.cpp
+        src/main.cpp
 )
 
 target_link_libraries(ogfx-demo PUBLIC ogfx-core)
+
+target_include_directories(ogfx-demo PRIVATE
+        ${ogfx-core_include_dirs}
+)
 
 target_compile_options(ogfx-demo PRIVATE ${ogfx-compile-options})
 

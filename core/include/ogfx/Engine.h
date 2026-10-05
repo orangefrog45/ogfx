@@ -1,8 +1,7 @@
 #pragma once
 
-#define VK_NO_PROTOTYPES
-#include <volk.h>
-#include <VkBootstrap.h>
+#include "ogfx/VkContext.h"
+
 #include <../imgui/imgui.h>
 #include <../imgui/backends/imgui_impl_glfw.h>
 #include <../imgui/backends/imgui_impl_vulkan.h>
@@ -13,7 +12,6 @@
 
 #include "ogfx/events/EventManager.h"
 #include "ogfx/events/EventListener.h"
-#include "ogfx/VkContext.h"
 #include "ogfx/Window.h"
 #include "ogfx/VkCommands.h"
 #include "ogfx/resources/Image.h"
@@ -44,9 +42,13 @@ namespace ogfx {
             JobSystem::Init();
             VkContext::CreateInstance(app_name);
 
-            if (init.p_window) init.p_window->Init(app_name);
+            if (init.p_window)
+                init.p_window->Init(app_name);
 
-            VkContext::PickPhysicalDevice(init.p_window ? std::make_optional(init.p_window->GetSurface()) : std::nullopt);
+            VkContext::PickPhysicalDevice(init.p_window
+                                              ? std::make_optional(
+                                                  init.p_window->GetSurface())
+                                              : std::nullopt);
             VkContext::CreateLogicalDevice();
             VkContext::InitVMA();
             VkContext::CreateCommandPools();
@@ -54,10 +56,11 @@ namespace ogfx {
             if (init.p_window) {
                 init.p_window->CreateSwapchain();
                 m_imgui_descriptor_pool = InitImGui(*init.p_window);
-                for (auto& cmd : m_imgui_cmd_bufs) cmd.Init(vk::CommandBufferLevel::ePrimary);
+                for (auto& cmd : m_imgui_cmd_bufs)
+                    cmd.Init(vk::CommandBufferLevel::ePrimary);
             }
 
-            m_shutdown_listener = {[&](auto&) {m_running = false;}, true};
+            m_shutdown_listener = {[&](auto&) { m_running = false; }, true};
 
             m_initialized = true;
             layers.Init();
@@ -69,7 +72,8 @@ namespace ogfx {
                 layers.Update();
                 layers.Render();
 
-                if (m_init_data.p_window && m_init_data.imgui_rd_func && m_init_data.p_window->CanPresent())
+                if (m_init_data.p_window && m_init_data.imgui_rd_func && m_init_data.
+                    p_window->CanPresent())
                     RenderImGui(m_init_data.imgui_rd_func());
 
                 layers.Present();
@@ -80,7 +84,8 @@ namespace ogfx {
         }
 
         void Cleanup() {
-            if (!m_initialized) return;
+            if (!m_initialized)
+                return;
 
             auto& device = VkContext::GetLogicalDevice();
             device.GraphicsQueueWaitIdle();
@@ -88,7 +93,8 @@ namespace ogfx {
             layers.Shutdown();
 
             if (m_init_data.p_window) {
-                for (auto& cmd : m_imgui_cmd_bufs) cmd.Destroy();
+                for (auto& cmd : m_imgui_cmd_bufs)
+                    cmd.Destroy();
                 ImGui_ImplVulkan_Shutdown();
                 device.device.destroyDescriptorPool(m_imgui_descriptor_pool);
             }
@@ -102,6 +108,7 @@ namespace ogfx {
         }
 
         LayerStack layers;
+
     private:
         void RenderImGui(const ImGuiRenderData& rd) {
             ImGui_ImplVulkan_NewFrame();

@@ -10,22 +10,27 @@ add_subdirectory(extern/otl)
 find_package(Vulkan REQUIRED)
 add_subdirectory(extern/VulkanMemoryAllocator)
 add_subdirectory(extern/volk)
+if (WIN32)
+    target_compile_definitions(volk PRIVATE VK_USE_PLATFORM_WIN32_KHR)
+endif ()
 add_subdirectory(extern/glfw)
 add_subdirectory(extern/spirv-cross)
 
-set(ogfx-core-includes
+set(ogfx-core_include_dirs
+        ${CMAKE_CURRENT_LIST_DIR}/core/include
         ${CMAKE_CURRENT_LIST_DIR}/extern/vk-bootstrap/src
         ${CMAKE_CURRENT_LIST_DIR}/extern/VulkanMemoryAllocator/include
         ${CMAKE_CURRENT_LIST_DIR}/extern/glfw/include
         ${CMAKE_CURRENT_LIST_DIR}/extern/lml/include
         ${CMAKE_CURRENT_LIST_DIR}/extern/imgui
         ${CMAKE_CURRENT_LIST_DIR}/extern
-        ${CMAKE_CURRENT_LIST_DIR}/extern/otl/include
+        ${CMAKE_CURRENT_LIST_DIR}/extern/volk
         ${CMAKE_CURRENT_LIST_DIR}/../../extern/entt/src
-        ${CMAKE_CURRENT_LIST_DIR}/core/include
         $ENV{VULKAN_SDK}/Include
+        ${otl_include_dirs}
         CACHE STRING "" FORCE
 )
+set(ogfx_include_dirs ${ogfx-core_include_dirs} CACHE STRING "" FORCE)
 
 set(ogfx-core-libs
         vk-bootstrap::vk-bootstrap

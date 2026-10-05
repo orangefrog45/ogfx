@@ -25,5 +25,7 @@
 #include <VkBootstrap.h>
 #include <GLFW/glfw3.h>
 
+#include <vk_mem_alloc.h>
+
 #include "otl/Log.h"
 #include "ogfx/util/VkUtil.h"

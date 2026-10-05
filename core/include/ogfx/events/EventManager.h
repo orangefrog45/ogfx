@@ -13,8 +13,8 @@ namespace ogfx {
 
     class EventManager {
     public:
-        EventManager(EventManager* _p_instance) {
-            mp_instance = _p_instance;
+        static void SetInstance(EventManager* p_instance) {
+            mp_instance = p_instance;
         }
 
         static EventManager& Get() {

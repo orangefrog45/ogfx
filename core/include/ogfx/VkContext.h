@@ -9,6 +9,9 @@
 #include <mutex>
 #include <optional>
 
+#define NOMINMAX
+#define VK_USE_PLATFORM_WIN32_KHR
+#define VK_NO_PROTOTYPES
 #include <volk.h>
 #include <vulkan/vulkan.hpp>
 #include <vk_mem_alloc.h>
@@ -18,167 +21,166 @@
 #include "ogfx/util/Log.h"
 
 namespace ogfx {
-	using FrameInFlightIndex = uint8_t;
+    using FrameInFlightIndex = uint8_t;
 
-	// THIS SHOULD NEVER BE ABOVE 4
-	constexpr FrameInFlightIndex MAX_FRAMES_IN_FLIGHT = 3;
+    // THIS SHOULD NEVER BE ABOVE 4
+    constexpr FrameInFlightIndex MAX_FRAMES_IN_FLIGHT = 3;
 
-	class LogicalDevice {
-	public:
-		vk::Device device;
-		vkb::Device vkb_device;
+    class LogicalDevice {
+    public:
+        vk::Device device;
+        vkb::Device vkb_device;
 
-		void SubmitGraphics(const vk::SubmitInfo& info, std::optional<vk::Fence> fence = std::nullopt) {
-			m_graphics_mux.lock();
-			m_graphics_queue.submit(info, fence.has_value() ? fence.value() : nullptr);
-			m_graphics_mux.unlock();
-		}
+        void SubmitGraphics(const vk::SubmitInfo& info,
+                            std::optional<vk::Fence> fence = std::nullopt) {
+            m_graphics_mux.lock();
+            m_graphics_queue.submit(info, fence.has_value() ? fence.value() : nullptr);
+            m_graphics_mux.unlock();
+        }
 
-		void GraphicsQueueWaitIdle() {
-			m_graphics_mux.lock();
-			m_graphics_queue.waitIdle();
-			m_graphics_mux.unlock();
-		}
+        void GraphicsQueueWaitIdle() {
+            m_graphics_mux.lock();
+            m_graphics_queue.waitIdle();
+            m_graphics_mux.unlock();
+        }
 
-		[[nodiscard]] vk::Result SubmitPresentation(const vk::PresentInfoKHR& info) {
-			m_present_mux.lock();
-			auto res = m_presentation_queue.presentKHR(info);
-			m_present_mux.unlock();
-			return res;
-		}
+        [[nodiscard]] vk::Result SubmitPresentation(const vk::PresentInfoKHR& info) {
+            m_present_mux.lock();
+            auto res = m_presentation_queue.presentKHR(info);
+            m_present_mux.unlock();
+            return res;
+        }
 
-		[[nodiscard]] uint32_t GetGraphicsQueueIdx() const {
-			return m_graphics_queue_idx;
-		}
+        [[nodiscard]] uint32_t GetGraphicsQueueIdx() const {
+            return m_graphics_queue_idx;
+        }
 
-		[[nodiscard]] uint32_t GetPresentationQueueIdx() const {
-			return m_presentation_queue_idx;
-		}
+        [[nodiscard]] uint32_t GetPresentationQueueIdx() const {
+            return m_presentation_queue_idx;
+        }
 
-		[[nodiscard]] vk::Queue GetGraphicsQueue() const {
-			return m_graphics_queue;
-		}
+        [[nodiscard]] vk::Queue GetGraphicsQueue() const {
+            return m_graphics_queue;
+        }
 
-	private:
-		std::mutex m_graphics_mux;
-		std::mutex m_present_mux;
+    private:
+        std::mutex m_graphics_mux;
+        std::mutex m_present_mux;
 
-		vk::Queue m_graphics_queue;
-		vk::Queue m_presentation_queue;
+        vk::Queue m_graphics_queue;
+        vk::Queue m_presentation_queue;
 
-		uint32_t m_graphics_queue_idx = 0;
-		uint32_t m_presentation_queue_idx = 0;
+        uint32_t m_graphics_queue_idx = 0;
+        uint32_t m_presentation_queue_idx = 0;
 
-		friend class VkContext;
-	};
+        friend class VkContext;
+    };
 
-	struct PhysicalDevice {
-		vk::PhysicalDevice device;
-		vkb::PhysicalDevice vkb_device;
-	};
+    struct PhysicalDevice {
+        vk::PhysicalDevice device;
+        vkb::PhysicalDevice vkb_device;
+    };
 
-	class VkContext {
-	public:
-		static VkContext& Get() {
-			static VkContext s_instance;
-			return s_instance;
-		}
+    class VkContext {
+    public:
+        inline static VkContext* s_instance = nullptr;
 
-		static void CreateInstance(const char* app_name) {
-			OGFX_ASSERT(!Get().m_instance);
-			Get().ICreateInstance(app_name);
-		}
+        static void SetInstance(VkContext* ptr) {
+            s_instance = ptr;
+        }
 
-		static void PickPhysicalDevice(std::optional<vk::SurfaceKHR> surface = std::nullopt) {
-			Get().IPickPhysicalDevice(surface);
-		}
+        static VkContext& Get() {
+            if (!s_instance) {
+                s_instance = new VkContext();
+            }
+            return *s_instance;
+        }
 
-		static void CreateLogicalDevice() {
-			Get().ICreateLogicalDevice();
-		}
+        static void CreateInstance(const char* app_name) {
+            OGFX_ASSERT(!Get().m_instance);
+            Get().ICreateInstance(app_name);
+        }
+
+        static void PickPhysicalDevice(
+            std::optional<vk::SurfaceKHR> surface = std::nullopt) {
+            Get().IPickPhysicalDevice(surface);
+        }
+
+        static void CreateLogicalDevice() {
+            Get().ICreateLogicalDevice();
+        }
 
 
-		static vk::CommandPool GetCommandPool() {
-			return Get().m_cmd_pools[std::this_thread::get_id()][GetCurrentFIF()];
-		}
+        static vk::CommandPool GetCommandPool() {
+            return Get().m_cmd_pools[std::this_thread::get_id()][GetCurrentFIF()];
+        }
 
-		static FrameInFlightIndex GetCurrentFIF() {
-			return Get().m_current_frame_idx % MAX_FRAMES_IN_FLIGHT;
-		}
+        static FrameInFlightIndex GetCurrentFIF() {
+            return Get().m_current_frame_idx % MAX_FRAMES_IN_FLIGHT;
+        }
 
-		static uint64_t GetCurrentFrameIdx() {
-			return Get().m_current_frame_idx;
-		}
+        static uint64_t GetCurrentFrameIdx() {
+            return Get().m_current_frame_idx;
+        }
 
-		static void CreateCommandPools();
+        static void CreateCommandPools();
 
-		static void InitVMA() {
-			Get().I_InitVMA();
-		}
+        static void InitVMA() {
+            Get().I_InitVMA();
+        }
 
-		static VmaAllocator& GetAllocator() {
-			return Get().m_allocator;
-		}
+        static VmaAllocator& GetAllocator() {
+            return Get().m_allocator;
+        }
 
-		static vk::Instance& GetInstance() {
-			return Get().m_instance;
-		}
+        static vk::Instance& GetInstance() {
+            return Get().m_instance;
+        }
 
-		static PhysicalDevice& GetPhysicalDevice() {
-			return Get().m_physical_device;
-		}
+        static PhysicalDevice& GetPhysicalDevice() {
+            return Get().m_physical_device;
+        }
 
-		static LogicalDevice& GetLogicalDevice() {
-			return Get().m_device;
-		}
+        static LogicalDevice& GetLogicalDevice() {
+            return Get().m_device;
+        }
 
-		static void NextFrame() {
-			Get().m_current_frame_idx++;
-		}
+        static void NextFrame() {
+            Get().m_current_frame_idx++;
+        }
 
-		static void Cleanup() {
-			Get().ICleanup();
-		}
+        static void Cleanup() {
+            Get().ICleanup();
+        }
 
-	private:
-		VkContext(const VkContext& other) = delete;
-		VkContext()=default;
+    private:
+        VkContext(const VkContext& other) = delete;
+        VkContext() = default;
 
-		void I_InitVMA() {
-			VmaAllocatorCreateInfo alloc_info{};
-			alloc_info.device = m_device.device;
-			alloc_info.physicalDevice = m_physical_device.device;
-			alloc_info.instance = m_instance;
+        void I_InitVMA();
 
-			VmaVulkanFunctions vulkan_functions{};
-			vmaImportVulkanFunctionsFromVolk(&alloc_info, &vulkan_functions);
+        void ICreateInstance(const char* app_name);
 
-			alloc_info.pVulkanFunctions = &vulkan_functions;
-			alloc_info.flags = VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT | VMA_ALLOCATOR_CREATE_KHR_EXTERNAL_MEMORY_WIN32_BIT;
-			OGFX_VK_CHECK(vmaCreateAllocator(&alloc_info, &m_allocator));
-		}
+        void IPickPhysicalDevice(std::optional<vk::SurfaceKHR> surface);
 
-		void ICreateInstance(const char* app_name);
+        void ICreateLogicalDevice();
 
-		void IPickPhysicalDevice(std::optional<vk::SurfaceKHR> surface);
+        void ICleanup();
 
-		void ICreateLogicalDevice();
+        uint64_t m_current_frame_idx = 0;
 
-		void ICleanup();
+        vk::Instance m_instance;
+        vkb::Instance m_vkb_instance;
 
-		uint64_t m_current_frame_idx = 0;
+        PhysicalDevice m_physical_device;
+        LogicalDevice m_device;
 
-		vk::Instance m_instance;
-		vkb::Instance m_vkb_instance;
+        VkDebugUtilsMessengerEXT m_debug_messenger;
 
-		PhysicalDevice m_physical_device;
-		LogicalDevice m_device;
+        std::unordered_map<std::thread::id, std::array<
+                               vk::CommandPool, MAX_FRAMES_IN_FLIGHT>> m_cmd_pools;
+        VmaAllocator m_allocator{};
 
-		VkDebugUtilsMessengerEXT m_debug_messenger;
-
-		std::unordered_map<std::thread::id, std::array<vk::CommandPool, MAX_FRAMES_IN_FLIGHT>> m_cmd_pools;
-		VmaAllocator m_allocator{};
-
-		friend class App;
-	};
+        friend class App;
+    };
 }

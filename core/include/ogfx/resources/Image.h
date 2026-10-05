@@ -1,5 +1,7 @@
 #pragma once
-#include <lml/include/lml/core.h>
+
+#include <lml/core.h>
+
 #include "ogfx/VkContext.h"
 
 namespace ogfx {

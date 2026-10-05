@@ -1,7 +1,6 @@
 #pragma once
 
 #include "util/Log.h"
-#include <volk.h>
 #include <vulkan/vk_enum_string_helper.h>
 #include <stacktrace>
 

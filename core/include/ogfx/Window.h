@@ -9,14 +9,18 @@
 
 namespace ogfx {
     class Window {
-        friend void GlfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-        friend void GlfwScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+        friend void GlfwKeyCallback(GLFWwindow* window, int key, int scancode, int action,
+                                    int mods);
+        friend void GlfwScrollCallback(GLFWwindow* window, double xoffset,
+                                       double yoffset);
         friend void GlfwCursorPosCallback(GLFWwindow* window, double xpos, double ypos);
-        friend void GlfwMouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+        friend void GlfwMouseButtonCallback(GLFWwindow* window, int button, int action,
+                                            int mods);
         friend void GlfwSizeCallback(GLFWwindow* p_glfw_window, int width, int height);
+
     public:
         struct WindowEvent : ogfx::Event {
-            OGFX_EVENT_CLASS("WindowEvent");
+            OGFX_EVENT_CLASS("WindowEvent")
 
             enum class Type {
                 RESIZED,
@@ -24,7 +28,7 @@ namespace ogfx {
             };
 
             Type type;
-            
+
             // Resize data
             uint32_t prev_width = 0;
             uint32_t prev_height = 0;
@@ -38,7 +42,8 @@ namespace ogfx {
             float new_dpi_scale = 1.0f;
         };
 
-        Window(uint32_t width, uint32_t height) : m_width(width), m_height(height) {}
+        Window(uint32_t width, uint32_t height) : m_width(width), m_height(height) {
+        }
 
         void Init(const char* name);
 

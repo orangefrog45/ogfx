@@ -19,8 +19,8 @@ void Image2D::CreateSampler() {
     sampler_info.maxAnisotropy = VkContext::GetPhysicalDevice().vkb_device.properties.
         limits.maxSamplerAnisotropy;
     sampler_info.borderColor = vk::BorderColor::eFloatOpaqueBlack;
-    sampler_info.unnormalizedCoordinates = false;
     // Coordinates are in range [0, 1], not [0, tex_pixel_extents]
+    sampler_info.unnormalizedCoordinates = false;
     sampler_info.compareEnable = false;
     sampler_info.compareOp = vk::CompareOp::eAlways;
     sampler_info.mipmapMode = vk::SamplerMipmapMode::eLinear;
@@ -131,10 +131,13 @@ void Image2D::CreateImage(VmaAllocationCreateFlags flags) {
         OGFX_VK_CHECK(
             vmaCreateImage(VkContext::GetAllocator(), &im_info, &alloc_info,
                 reinterpret_cast<VkImage*>(&m_image), &m_allocation, nullptr));
+
+        if (!m_image)
+            return;
     }
 
-    CreateImageView();
     CreateSampler();
+    CreateImageView();
 }
 
 void Image2D::CreateExternalSharedImage(VmaAllocationCreateFlags flags) {

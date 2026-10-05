@@ -4,8 +4,6 @@
 #include "ogfx/VkContext.h"
 #include "ogfx/multithreading/JobSystem.h"
 
-#include <VkBootstrap.h>
-
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
 using namespace ogfx;
@@ -28,15 +26,12 @@ VulkanDebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
 
     if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) {
         log::Trace(message);
-    }
-    else if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) {
+    } else if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) {
         log::Info(message);
-    }
-    else if (messageSeverity &
+    } else if (messageSeverity &
         VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
         log::Warn(message);
-    }
-    else if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
+    } else if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
         log::Error(message);
     }
 
@@ -130,7 +125,6 @@ void VkContext::CreateCommandPools() {
 void VkContext::ICreateInstance(const char* app_name) {
     OGFX_VK_CHECK(volkInitialize());
     VULKAN_HPP_DEFAULT_DISPATCHER.init(vkGetInstanceProcAddr);
-
     std::vector<const char*> extensions = {
         VK_KHR_SURFACE_EXTENSION_NAME,
 #if defined(_WIN32)
@@ -157,8 +151,7 @@ void VkContext::ICreateInstance(const char* app_name) {
 
     if (inst_ret.has_value()) {
         m_vkb_instance = inst_ret.value();
-    }
-    else {
+    } else {
         log::Error("Failed to create instance:");
         for (const auto& reason : inst_ret.detailed_failure_reasons()) {
             log::Error(reason);
@@ -172,6 +165,23 @@ void VkContext::ICreateInstance(const char* app_name) {
 
     volkLoadInstance(m_instance);
     VULKAN_HPP_DEFAULT_DISPATCHER.init(m_instance);
+}
+
+void VkContext::I_InitVMA() {
+    VmaAllocatorCreateInfo alloc_info{};
+    alloc_info.device = m_device.device;
+    alloc_info.physicalDevice = m_physical_device.device;
+    alloc_info.instance = m_instance;
+    alloc_info.vulkanApiVersion = VK_API_VERSION_1_4;
+    alloc_info.flags = VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT |
+        VMA_ALLOCATOR_CREATE_KHR_EXTERNAL_MEMORY_WIN32_BIT;
+
+    VmaVulkanFunctions vulkan_functions{};
+    OGFX_VK_CHECK(
+        vmaImportVulkanFunctionsFromVolk(&alloc_info, &vulkan_functions));
+
+    alloc_info.pVulkanFunctions = &vulkan_functions;
+    OGFX_VK_CHECK(vmaCreateAllocator(&alloc_info, &m_allocator));
 }
 
 void VkContext::ICleanup() {
