@@ -8,6 +8,7 @@ namespace ogfx {
         virtual ~Layer() = default;
 
         virtual void Init() {}
+        virtual void PostInit() {}
         virtual void Update() {}
         virtual void Render() {}
         virtual void RenderGUI() {}
@@ -17,14 +18,19 @@ namespace ogfx {
 
     class LayerStack {
     public:
-        template<typename LayerType, typename ...Args>
+        template <typename LayerType, typename... Args>
         LayerType& AddLayer(Args&&... args) {
-            return *static_cast<LayerType*>(m_layers.emplace_back(std::make_unique<LayerType>(std::forward<Args>(args)...)).get());
+            return *static_cast<LayerType*>(m_layers.emplace_back(
+                std::make_unique<LayerType>(std::forward<Args>(args)...)).get());
         }
 
         void Init() {
             for (auto& layer : m_layers) {
                 layer->Init();
+            }
+            
+            for (auto& layer : m_layers) {
+                layer->PostInit();
             }
         }
 

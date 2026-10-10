@@ -75,6 +75,10 @@ namespace ogfx {
             return m_swapchain_images_wrapped[idx];
         }
 
+        [[nodiscard]] uint32_t GetSwapchainImageCount() const {
+            return (uint32_t)m_swapchain_images.size();
+        }
+
         [[nodiscard]] const Input& GetInput() const {
             return m_input;
         }

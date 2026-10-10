@@ -19,16 +19,26 @@ Shader::~Shader() {
 
 Shader& Shader::AddStage(vk::ShaderStageFlagBits shader_stage_flags,
                          const std::string& spv_path) {
+    std::vector<std::byte> spv;
+    if (!otl::ReadBinaryFile(spv_path, spv)) {
+        log::Error("Failed to read shader file: '{}'", spv_path);
+        return *this;
+    }
+
+    return AddStage(shader_stage_flags, std::span{
+                        reinterpret_cast<char*>(spv.data()), spv.size()
+                    });
+}
+
+Shader& Shader::AddStage(vk::ShaderStageFlagBits shader_stage_flags,
+                         std::span<const char> spv_data) {
     for (auto stage : m_shader_stages) {
         if (shader_stage_flags == stage)
             OGFX_ASSERT(false, "Cannot add duplicate shader stage");
     }
 
-    std::vector<std::byte>& spv = m_spv_storage.emplace_back();
-    if (!otl::ReadBinaryFile(spv_path, spv)) {
-        log::Error("Failed to read shader file: '{}'", spv_path);
-        return *this;
-    }
+    std::vector<char>& spv = m_spv_storage.emplace_back(
+        spv_data.begin(), spv_data.end());
 
     OGFX_ASSERT(spv.size() % 4 == 0);
 
@@ -70,7 +80,7 @@ void Shader::Build() {
     m_shader_create_infos.clear();
 }
 
-void Shader::ReflectPipelineLayout(const std::vector<std::byte>& spv) {
+void Shader::ReflectPipelineLayout(std::span<char> spv) {
     if (m_pipeline_layout)
         return;
 
