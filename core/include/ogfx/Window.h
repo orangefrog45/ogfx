@@ -42,8 +42,7 @@ namespace ogfx {
             float new_dpi_scale = 1.0f;
         };
 
-        Window(uint32_t width, uint32_t height) : m_width(width), m_height(height) {
-        }
+        Window(uint32_t width, uint32_t height) : m_width(width), m_height(height) {}
 
         void Init(const char* name);
 
@@ -52,6 +51,8 @@ namespace ogfx {
 
         void Update();
         void SetCursorStyle(CursorStyle style);
+        void SetCursorVisible(bool visible);
+        void SetCursorLocked(bool locked);
         void Cleanup();
 
         [[nodiscard]] bool ShouldClose() const;
@@ -80,6 +81,10 @@ namespace ogfx {
         }
 
         [[nodiscard]] const Input& GetInput() const {
+            return m_input;
+        }
+
+        [[nodiscard]] Input& GetInput() {
             return m_input;
         }
 

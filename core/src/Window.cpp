@@ -177,6 +177,14 @@ void Window::SetCursorStyle(CursorStyle style) {
     glfwSetCursor(mp_window, cursors[static_cast<unsigned>(style)]);
 }
 
+void Window::SetCursorVisible(bool visible) {
+    glfwSetInputMode(mp_window, GLFW_CURSOR, visible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_HIDDEN);
+}
+
+void Window::SetCursorLocked(bool locked) {
+    glfwSetInputMode(mp_window, GLFW_CURSOR, locked ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+}
+
 void Window::Cleanup() {
     m_swapchain_images_wrapped.clear();
     vkDestroySwapchainKHR(VkContext::GetLogicalDevice().device, m_swapchain, nullptr);

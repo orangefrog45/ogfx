@@ -99,18 +99,24 @@ void Shader::ReflectPipelineLayout(std::span<char> spv) {
 
     std::unordered_map<uint32_t, DescriptorSetLayout> sets;
 
-    for (const spirv_cross::Resource& resource : resources.storage_images) {
-        uint32_t set =
-            compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
+    auto add_bindings = [&](const auto& resource_list, vk::DescriptorType type) {
+        for (const spirv_cross::Resource& resource : resource_list) {
+            uint32_t set =
+                compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
 
-        vk::DescriptorSetLayoutBinding& binding = sets[set].bindings.emplace_back();
-        binding.binding =
-            compiler.get_decoration(resource.id, spv::DecorationBinding);
-        binding.descriptorType = vk::DescriptorType::eStorageImage;
-        binding.descriptorCount = 1;
-        binding.stageFlags =
-            vk::ShaderStageFlagBits::eAll; // TODO: Make this more specific
-    }
+            vk::DescriptorSetLayoutBinding& binding = sets[set].bindings.emplace_back();
+            binding.binding =
+                compiler.get_decoration(resource.id, spv::DecorationBinding);
+            binding.descriptorType = type;
+            binding.descriptorCount = 1;
+            binding.stageFlags =
+                vk::ShaderStageFlagBits::eAll; // TODO: Make this more specific
+        }
+    };
+
+    add_bindings(resources.storage_images, vk::DescriptorType::eStorageImage);
+    add_bindings(resources.uniform_buffers, vk::DescriptorType::eUniformBuffer);
+    add_bindings(resources.storage_buffers, vk::DescriptorType::eStorageBuffer);
 
     for (const spirv_cross::Resource& resource :
          resources.push_constant_buffers) {

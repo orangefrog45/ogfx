@@ -5,6 +5,7 @@ project(ogfx)
 add_library(ogfx-core STATIC
         src/VkContext.cpp
         src/resources/Image.cpp
+        src/resources/Buffer.cpp
         src/VkCommon.cpp
         src/Window.cpp
         src/Gui.cpp
