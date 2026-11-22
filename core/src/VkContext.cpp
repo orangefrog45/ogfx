@@ -52,24 +52,29 @@ void VkContext::IPickPhysicalDevice(std::optional<vk::SurfaceKHR> surface) {
     features12.descriptorIndexing = true;
     features12.timelineSemaphore = true;
 
+    VkPhysicalDeviceVulkan14Features features14{
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_FEATURES
+    };
+    // Lets fragment shaders read attachments written by earlier draws in the same rendering
+    features14.dynamicRenderingLocalRead = true;
+    features14.hostImageCopy = true;
+    features14.pushDescriptor = true;
+
     vkb::PhysicalDeviceSelector selector{m_vkb_instance};
 
     vk::PhysicalDeviceShaderObjectFeaturesEXT shader_object_features{};
     shader_object_features.shaderObject = true;
 
-    vk::PhysicalDeviceHostImageCopyFeaturesEXT host_image_copy_features{};
-    host_image_copy_features.hostImageCopy = true;
-
     selector.set_minimum_version(1, 4)
             .set_required_features_13(features)
             .set_required_features_12(features12)
+            .set_required_features_14(features14)
             .add_required_extension(VK_EXT_SHADER_OBJECT_EXTENSION_NAME)
             .add_required_extension(VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME)
             .add_required_extension("VK_KHR_external_memory")
             .add_required_extension("VK_KHR_external_memory_win32")
             .add_required_extension(VK_EXT_HOST_IMAGE_COPY_EXTENSION_NAME)
-            .add_required_extension_features(shader_object_features)
-            .add_required_extension_features(host_image_copy_features);
+            .add_required_extension_features(shader_object_features);
 
     if (surface.has_value())
         selector.set_surface(surface.value());

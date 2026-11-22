@@ -43,6 +43,9 @@ namespace ogfx {
 
         void Create(vk::DeviceSize size, vk::BufferUsageFlags usage, bool mapped);
 
+        // Creates a host-mapped buffer initialized with size bytes from host_data
+        [[nodiscard]] static Buffer From(const void* host_data, vk::DeviceSize size, vk::BufferUsageFlags usage);
+
         void Destroy();
 
         // Copies size bytes from data into the buffer at offset

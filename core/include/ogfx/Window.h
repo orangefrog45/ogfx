@@ -53,6 +53,9 @@ namespace ogfx {
         void SetCursorStyle(CursorStyle style);
         void SetCursorVisible(bool visible);
         void SetCursorLocked(bool locked);
+        // A locked cursor is also hidden, so this is false while locked
+        [[nodiscard]] bool IsCursorVisible() const;
+        [[nodiscard]] bool IsCursorLocked() const;
         void Cleanup();
 
         [[nodiscard]] bool ShouldClose() const;

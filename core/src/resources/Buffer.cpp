@@ -32,6 +32,14 @@ void Buffer::Create(vk::DeviceSize size, vk::BufferUsageFlags usage, bool mapped
     m_size = size;
 }
 
+Buffer Buffer::From(const void* host_data, vk::DeviceSize size,
+                    vk::BufferUsageFlags usage) {
+    Buffer buffer;
+    buffer.Create(size, usage, true);
+    buffer.Write(host_data, size);
+    return std::move(buffer);
+}
+
 void Buffer::Destroy() {
     if (m_buffer != VK_NULL_HANDLE) {
         vmaDestroyBuffer(VkContext::GetAllocator(), m_buffer, m_allocation);
