@@ -33,30 +33,26 @@ namespace ogfx {
 
         void SubmitGraphics(const vk::SubmitInfo& info,
                             std::optional<vk::Fence> fence = std::nullopt) {
-            m_graphics_mux.lock();
+            std::lock_guard lock{m_graphics_mux};
             m_graphics_queue.submit(info, fence.has_value() ? fence.value() : nullptr);
-            m_graphics_mux.unlock();
         }
 
         void SubmitGraphics(const vk::SubmitInfo2& info,
                             std::optional<vk::Fence> fence = std::nullopt) {
-            m_graphics_mux.lock();
+            std::lock_guard lock{m_graphics_mux};
             m_graphics_queue.submit2(info, fence.has_value() ? fence.value() : nullptr);
-            m_graphics_mux.unlock();
         }
 
         void GraphicsQueueWaitIdle() {
-            m_graphics_mux.lock();
+            std::lock_guard lock{m_graphics_mux};
             m_graphics_queue.waitIdle();
-            m_graphics_mux.unlock();
         }
 
         [[nodiscard]] vk::Result SubmitPresentation(const vk::PresentInfoKHR& info) {
             // C API used so eErrorOutOfDateKHR / eSuboptimalKHR are returned instead of thrown
-            m_present_mux.lock();
+            std::lock_guard lock{m_present_mux};
             auto res = static_cast<vk::Result>(vkQueuePresentKHR(
                 m_presentation_queue, reinterpret_cast<const VkPresentInfoKHR*>(&info)));
-            m_present_mux.unlock();
             return res;
         }
 

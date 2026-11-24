@@ -15,9 +15,11 @@ void Image2D::CreateSampler() {
     sampler_info.addressModeU = vk::SamplerAddressMode::eRepeat;
     sampler_info.addressModeV = vk::SamplerAddressMode::eRepeat;
     sampler_info.addressModeW = vk::SamplerAddressMode::eRepeat;
-    sampler_info.anisotropyEnable = true;
-    sampler_info.maxAnisotropy = VkContext::GetPhysicalDevice().vkb_device.properties.
-        limits.maxSamplerAnisotropy;
+    const auto& physical_device = VkContext::GetPhysicalDevice().vkb_device;
+    sampler_info.anisotropyEnable = physical_device.features.samplerAnisotropy;
+    sampler_info.maxAnisotropy = physical_device.features.samplerAnisotropy
+                                     ? physical_device.properties.limits.maxSamplerAnisotropy
+                                     : 1.0f;
     sampler_info.borderColor = vk::BorderColor::eFloatOpaqueBlack;
     // Coordinates are in range [0, 1], not [0, tex_pixel_extents]
     sampler_info.unnormalizedCoordinates = false;

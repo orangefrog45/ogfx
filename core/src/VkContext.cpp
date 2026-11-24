@@ -83,6 +83,11 @@ void VkContext::IPickPhysicalDevice(std::optional<vk::SurfaceKHR> surface) {
 
     m_physical_device.vkb_device = selector.select().value();
     m_physical_device.device = m_physical_device.vkb_device.physical_device;
+
+    // Samplers only filter anisotropically when this ends up enabled
+    VkPhysicalDeviceFeatures optional_features{};
+    optional_features.samplerAnisotropy = true;
+    m_physical_device.vkb_device.enable_features_if_present(optional_features);
 }
 
 void VkContext::ICreateLogicalDevice() {
